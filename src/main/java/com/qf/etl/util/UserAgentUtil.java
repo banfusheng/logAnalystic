@@ -13,7 +13,7 @@ public class UserAgentUtil {
 
     private static UASparser uaSparser =null;
     static {
-        uaSparser =
+
     }
 
 
