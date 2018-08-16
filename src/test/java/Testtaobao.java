@@ -1,4 +1,7 @@
+import com.qf.etl.util.ip.IPSeeker;
 import com.qf.etl.util.tobaoIpParseUtil;
+
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉 <br>
@@ -10,9 +13,17 @@ import com.qf.etl.util.tobaoIpParseUtil;
 
 public class Testtaobao {
     public static void main(String[] args) {
+//219.136.134.157  220.194.218.22
+        tobaoIpParseUtil tobaoIpParseUtil = new tobaoIpParseUtil();
 
-        System.out.println(new tobaoIpParseUtil().getInfo("219.136.134.157"));
+        System.out.println(tobaoIpParseUtil.getInfo("149.244.251.66"));
 
+        List<String> allIp = IPSeeker.getInstance().getAllIp();
+        for (String ip : allIp) {
+            System.out.println(ip + "--------------" +
+                    tobaoIpParseUtil.getInfo(ip));
 
+            System.out.println();
+        }
     }
 }

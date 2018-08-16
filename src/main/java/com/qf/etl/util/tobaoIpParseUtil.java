@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -20,7 +19,7 @@ import java.net.URL;
 public class tobaoIpParseUtil {
 
     private static final Logger logger = Logger.getLogger(tobaoIpParseUtil.class);
-    private final static String urlStr = "http://ip.taobao.com/service/getIpInfo.php";
+    private final static String urlStr = "http://ip.taobao.com/service/getIpInfo.php?ip=";
     RegionInfo info2 = new RegionInfo();
 
     /**
@@ -35,7 +34,7 @@ public class tobaoIpParseUtil {
             String data = jsonObject.getString("data");
             JSONObject dataJsonObject = JSONObject.parseObject(data);
             info2.setCountry(dataJsonObject.getString("country"));
-            info2.setProvince(dataJsonObject.getString("province"));
+            info2.setProvince(dataJsonObject.getString("region"));
             info2.setCity(dataJsonObject.getString("city"));
         }
 
@@ -52,15 +51,15 @@ public class tobaoIpParseUtil {
         URL url = null;
         HttpURLConnection conn = null;
         try {
-            url = new URL(urlStr);
+            url = new URL(urlStr+ip);
             //新建链接的实例
             conn = (HttpURLConnection) url.openConnection();
             //设置链接超时时间
             conn.setConnectTimeout(5000);
             //设置读取数据的时间
-            conn.setReadTimeout(5000);
+            conn.setReadTimeout(10000);
             //设置是否打开输出流
-            conn.setDoOutput(true);
+           // conn.setDoOutput(true);
             //设置是否打开输入流
             conn.setDoInput(true);
             //设置提交的方法
@@ -69,12 +68,12 @@ public class tobaoIpParseUtil {
             conn.setUseCaches(false);
             //打开链接的端口
             conn.connect();
-            //打开输出流对服务器写数据
+          /*  //打开输出流对服务器写数据
             DataOutputStream out = new DataOutputStream(conn.getOutputStream());
             //写入数据
             out.writeBytes(ip);
             out.flush();
-            out.close();
+            out.close();*/
             //往对端写完数据对服务器返回数据  以bufferreader流俩读取
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(
