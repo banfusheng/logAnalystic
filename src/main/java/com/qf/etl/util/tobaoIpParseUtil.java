@@ -31,11 +31,13 @@ public class tobaoIpParseUtil {
         if (strResult != null) {
             System.out.println("1   " + strResult);
             JSONObject jsonObject = JSON.parseObject(strResult);
-            String data = jsonObject.getString("data");
-            JSONObject dataJsonObject = JSONObject.parseObject(data);
-            info2.setCountry(dataJsonObject.getString("country"));
-            info2.setProvince(dataJsonObject.getString("region"));
-            info2.setCity(dataJsonObject.getString("city"));
+            if (jsonObject.getString("code").equals("0")) {
+                String data = jsonObject.getString("data");
+                JSONObject dataJsonObject = JSONObject.parseObject(data);
+                info2.setCountry(dataJsonObject.getString("country"));
+                info2.setProvince(dataJsonObject.getString("region"));
+                info2.setCity(dataJsonObject.getString("city"));
+            }
         }
 
         return info2;
@@ -51,7 +53,7 @@ public class tobaoIpParseUtil {
         URL url = null;
         HttpURLConnection conn = null;
         try {
-            url = new URL(urlStr+ip);
+            url = new URL(urlStr + ip);
             //新建链接的实例
             conn = (HttpURLConnection) url.openConnection();
             //设置链接超时时间
@@ -59,7 +61,7 @@ public class tobaoIpParseUtil {
             //设置读取数据的时间
             conn.setReadTimeout(10000);
             //设置是否打开输出流
-           // conn.setDoOutput(true);
+            // conn.setDoOutput(true);
             //设置是否打开输入流
             conn.setDoInput(true);
             //设置提交的方法
