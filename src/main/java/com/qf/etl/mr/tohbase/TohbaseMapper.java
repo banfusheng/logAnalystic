@@ -9,7 +9,7 @@ package com.qf.etl.mr.tohbase;
 
 import com.qf.common.EventLogConstants;
 import com.qf.etl.util.LogUtil;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.NullWritable;

@@ -105,8 +105,6 @@
                                 <includes>
                                     <include>cz.mallat.uasparser:uasparser</include>
                                     <include>net.sourceforge.jregex:jregex</include>
-                                    <include>org.apache.commons.lang3.StringUtils:StringUtils</include>
-
                                 </includes>
                             </artifactSet>
                         </configuration>
