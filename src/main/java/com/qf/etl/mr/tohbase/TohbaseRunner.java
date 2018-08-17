@@ -61,7 +61,7 @@ public class TohbaseRunner implements Tool {
         //初始化reduce addDependencyJars:false 本地提交本地运行，反之等于true是集群运行
         TableMapReduceUtil.initTableReducerJob(EventLogConstants.EVENT_LOG_HBASE_NAME,
                 null, job, null, null, null,
-                null, false);
+                null, true);
 
         job.setNumReduceTasks(0);
         //将不能识别的资源文件添加到分布式缓存文件
@@ -128,7 +128,7 @@ public class TohbaseRunner implements Tool {
 
     /**
      * 设置清洗数据的输入路径
-     * 运行：yarn jar *.jar .class -d 2018-07-05
+     * 运行：yarn jar *.jar .class -d 2018-08-15
      * @param args
      * @param conf
      */
