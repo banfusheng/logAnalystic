@@ -114,7 +114,7 @@ public class IPParseUtil extends IPSeeker {
     /**
      * 用于封装ip解析出来的国家省份市 信息
      */
-    private static class RegionInfo {
+    static class RegionInfo {
         private static final String DEFAULT_VALUE = null;
         private String country = DEFAULT_VALUE;
         private String province = DEFAULT_VALUE;

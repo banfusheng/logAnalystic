@@ -1,0 +1,7 @@
+2018-08-17 00:32:12,015  WARN [org.apache.hadoop.mapred.JobClient] - Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
+2018-08-17 00:32:12,062  WARN [org.apache.hadoop.mapred.JobClient] - No job jar file set.  User classes may not be found. See JobConf(Class) or JobConf#setJar(String).
+2018-08-17 00:32:12,062  WARN [org.apache.hadoop.security.UserGroupInformation] - PriviledgedActionException as:hadoop (auth:SIMPLE) cause:org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory E:/test/out/004 already exists
+2018-08-17 00:32:41,161  WARN [org.apache.hadoop.mapred.JobClient] - Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
+2018-08-17 00:32:41,223  WARN [org.apache.hadoop.mapred.JobClient] - No job jar file set.  User classes may not be found. See JobConf(Class) or JobConf#setJar(String).
+2018-08-17 00:32:43,095  WARN [mapreduce.Counters] - Group org.apache.hadoop.mapred.Task$Counter is deprecated. Use org.apache.hadoop.mapreduce.TaskCounter instead
+2018-08-17 00:32:43,517  WARN [mapreduce.Counters] - Group org.apache.hadoop.mapred.Task$Counter is deprecated. Use org.apache.hadoop.mapreduce.TaskCounter instead
