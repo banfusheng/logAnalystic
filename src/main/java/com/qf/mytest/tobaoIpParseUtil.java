@@ -5,7 +5,7 @@
  * @create 2018/8/15
  * @since 1.0.0
  */
-package com.qf.etl.util;
+package com.qf.mytest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

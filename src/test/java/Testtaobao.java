@@ -1,6 +1,5 @@
 import com.qf.etl.util.ip.IPSeeker;
-import com.qf.etl.util.taobaoIpparse;
-import com.qf.etl.util.tobaoIpParseUtil;
+import com.qf.mytest.taobaoIpparse;
 
 import java.util.List;
 

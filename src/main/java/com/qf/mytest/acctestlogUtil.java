@@ -5,7 +5,7 @@
  * @create 2018/8/16
  * @since 1.0.0
  */
-package com.qf.etl.util;
+package com.qf.mytest;
 
 import org.apache.directory.api.util.Strings;
 import org.apache.log4j.Logger;

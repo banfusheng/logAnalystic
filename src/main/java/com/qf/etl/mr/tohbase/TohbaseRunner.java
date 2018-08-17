@@ -47,8 +47,7 @@ public class TohbaseRunner implements Tool {
         Configuration conf = getConf();
         Job job = Job.getInstance(conf, "TOhbase");
         //????
-        job.setJarByClass(ToolRunner.class);
-        //job.setJarByClass(TohbaseRunner.class);
+        job.setJarByClass(TohbaseRunner.class);
 
         job.setMapperClass(TohbaseMapper.class);
         job.setMapOutputKeyClass(NullWritable.class);
