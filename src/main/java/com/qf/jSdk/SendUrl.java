@@ -42,15 +42,11 @@ public class SendUrl {
                         @Override
                         public void run() {
                             SendUrl.getSendUrl().consumeUrl();
-
-
                         }
                     });
                     //启动线程// 一般哦用于在服务器中
                     //th.setDaemon(true);//是否过载在后台启动守护线程
-
                     th.start();
-
                 }
             }
         }
@@ -93,7 +89,7 @@ public class SendUrl {
     /**
      * 真正发送url的类
      */
-    public static class HttpRequestUtil {
+    private static class HttpRequestUtil {
 
         /**
          * 真正发送的方法

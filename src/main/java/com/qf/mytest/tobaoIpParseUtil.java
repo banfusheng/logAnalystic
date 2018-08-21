@@ -53,6 +53,7 @@ public class tobaoIpParseUtil {
         URL url = null;
         HttpURLConnection conn = null;
         try {
+            //得先判断ip的情况
             url = new URL(urlStr + ip);
             //新建链接的实例
             conn = (HttpURLConnection) url.openConnection();

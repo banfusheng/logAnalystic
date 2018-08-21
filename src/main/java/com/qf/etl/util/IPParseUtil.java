@@ -7,9 +7,11 @@
  */
 package com.qf.etl.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.qf.etl.util.ip.IPSeeker;
-
-
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -17,11 +19,13 @@ import org.apache.log4j.Logger;
 public class IPParseUtil extends IPSeeker {
 
     private static final Logger logger = Logger.getLogger(IPParseUtil.class);
+    private final static String urlStr = "http://ip.taobao.com/service/getIpInfo.php?ip=";
 
     RegionInfo info = new RegionInfo();
 
     /**
      * 用于解析ip
+     *
      * @param ip
      * @return
      */
@@ -79,17 +83,17 @@ public class IPParseUtil extends IPSeeker {
                         case "重庆":
                         case "天津":
                             info.setProvince(flag + "市");
-                            country1 = country.substring(2);
-                            index = country.indexOf("区");
+                            country1 = country.substring(3);
+                            index = country1.indexOf("区");
                             if (index > 0) {
-                                char ch = country.charAt(index - 1);
+                                char ch = country1.charAt(index - 1);
                                 if (ch != '小' || ch != '校' || ch != '军') {
-                                    info.setCity(country.substring(0, index + 1));
+                                    info.setCity(country1.substring(0, index + 1));
                                 }
                             }
                             index = country.indexOf("县");
                             if (index > 0) {
-                                info.setCity(country.substring(0, index + 1));
+                                info.setCity(country1.substring(0, index + 1));
                             }
                             break;
                         case "台湾":
@@ -110,11 +114,67 @@ public class IPParseUtil extends IPSeeker {
         return info;
     }
 
+    /**
+     * 使用淘宝的ip解析库解析ip
+     *
+     * @param ip
+     * @param charset
+     * @return
+     * @throws Exception
+     */
+    public RegionInfo parserIp1(String ip, String charset) {
+        HttpClient httpClient = new HttpClient();
+        GetMethod method = new GetMethod(urlStr + ip);
+        //PostMethod postMethod = new PostMethod(url);
+
+        try {
+            if (StringUtils.isBlank(ip)) {
+                throw new Exception("ip为空");
+            }
+
+
+            //设置请求的编码'
+            if (null != charset) {
+                method.addRequestHeader(
+                        "Content-Type",
+                        "application/x-www-form-urlencoded;charset=" + charset);
+            } else {
+                method.addRequestHeader(
+                        "Content-Type",
+                        "application/x-www-form-urlencoded; charset=" + "utf-8");
+            }
+            int statusCode = httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK) {
+                System.out.println("Method failed: " + method.getStatusLine());
+            }
+            //返回响应信息
+            byte[] responseBody =
+                    method.getResponseBodyAsString()
+                            .getBytes(method.getResponseCharSet());
+            // 在返回响应消息使用编码(utf-8或gb2312)
+            String response = new String(responseBody, "utf-8");
+
+            //将reponse的字符串转换成json对象
+            JSONObject jo = JSONObject.parseObject(response);
+            JSONObject jo1 = JSONObject.parseObject(jo.getString("data"));
+
+            //赋值
+            info.setCountry(jo1.getString("country"));
+            info.setProvince(jo1.getString("region"));
+            info.setCity(jo1.getString("city"));
+
+            return info;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return info;
+    }
+
 
     /**
      * 用于封装ip解析出来的国家省份市 信息
      */
-    static class RegionInfo {
+    public static class RegionInfo {
         private static final String DEFAULT_VALUE = "null";
         private String country = DEFAULT_VALUE;
         private String province = DEFAULT_VALUE;

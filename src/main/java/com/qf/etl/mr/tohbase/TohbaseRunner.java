@@ -46,7 +46,7 @@ public class TohbaseRunner implements Tool {
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
         Job job = Job.getInstance(conf, "TOhbase");
-        //????
+        //
         job.setJarByClass(TohbaseRunner.class);
 
         job.setMapperClass(TohbaseMapper.class);
@@ -58,7 +58,7 @@ public class TohbaseRunner implements Tool {
         //TODO 判断hbase中的表是否存在
         this.isExistsHbaseTable(conf);
 
-        //初始化reduce addDependencyJars:false 本地提交本地运行，反之等于true是集群运行
+        //初始化reduce addDependencyJars:false 本地提交本地运行，反之等于true是本地提交集群运行
         TableMapReduceUtil.initTableReducerJob(EventLogConstants.EVENT_LOG_HBASE_NAME,
                 null, job, null, null, null,
                 null, true);

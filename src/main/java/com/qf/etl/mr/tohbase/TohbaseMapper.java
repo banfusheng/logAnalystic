@@ -104,7 +104,8 @@ public class TohbaseMapper
 
                 }
             }
-            //将put存储
+            //将put存储将context放在外面这样一行数据去写一次
+            // 提高了效率(比有一个键值对就写一个)
             context.write(NullWritable.get(), put);
             this.outputRecords++;
         } else {
@@ -130,7 +131,7 @@ public class TohbaseMapper
     private String buildRowKey(String server_time, String uuid, String memberId, String eventName) {
         StringBuilder sb = new StringBuilder();
         sb.append(server_time + "_");
-        //重置crc32的值
+        //重置crc32的值   0
         crc.reset();
         if (StringUtils.isNotEmpty(uuid)) {
             crc.update(uuid.getBytes());
