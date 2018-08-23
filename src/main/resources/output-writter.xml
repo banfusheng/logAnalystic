@@ -15,62 +15,63 @@
 
     <property>
         <name>writer_active_user</name>
-        <value>com.qianfeng.anlystic.mr.au.ActiveUserwriter</value>
+        <value>com.qf.anlystic.mr.au.ActiveUserWritter</value>
     </property>
 
     <property>
         <name>writer_browser_active_user</name>
-        <value>com.qianfeng.anlystic.mr.au.BrowserActiveUserwriter</value>
+        <value>com.qf.anlystic.mr.au.BrowserActiveUserWritter</value>
+    </property>
+    <property>
+        <name>writer_hourly_active_user</name>
+        <value>com.qf.anlystic.mr.au.HourlyActiveUserWritter</value>
     </property>
 
     <property>
         <name>writer_active_member</name>
-        <value>com.qianfeng.anlystic.mr.am.ActiveMemberwriter</value>
+        <value>com.qf.anlystic.mr.am.ActiveMemberWritter</value>
     </property>
 
     <property>
         <name>writer_browser_active_member</name>
-        <value>com.qianfeng.anlystic.mr.am.BrowserActiveMemberwriter</value>
+        <value>com.qf.anlystic.mr.am.BrowserActiveMemberrWritter</value>
     </property>
 
     <property>
         <name>writer_new_member</name>
-        <value>com.qianfeng.anlystic.mr.nm.NewMemberwriter</value>
+        <value>com.qf.anlystic.mr.nm.NewMemberWritter</value>
     </property>
 
     <property>
         <name>writer_browser_new_member</name>
-        <value>com.qianfeng.anlystic.mr.nm.NewMemberwriter</value>
+        <value>com.qf.anlystic.mr.nm.BrowserNewMemberWritter</value>
     </property>
 
     <property>
         <name>writer_member_info</name>
-        <value>com.qianfeng.anlystic.mr.nm.NewMemberwriter</value>
+        <value>com.qf.anlystic.mr.nm.NewMemberWritter</value>
     </property>
 
 
     <property>
         <name>writer_session</name>
-        <value>com.qianfeng.anlystic.mr.session.Sessionwriter</value>
+        <value>com.qf.anlystic.mr.session.Sessionwriter</value>
     </property>
 
     <property>
         <name>writer_browser_session</name>
-        <value>com.qianfeng.anlystic.mr.session.Sessionwriter</value>
+        <value>com.qf.anlystic.mr.session.Sessionwriter</value>
     </property>
 
-    <property>
-        <name>writer_hourly_active_user</name>
-        <value>com.qianfeng.anlystic.mr.au.HourlyActiveUserwriter</value>
-    </property>
+
 
     <property>
         <name>writer_pageview</name>
-        <value>com.qianfeng.anlystic.mr.pv.PageViewwriter</value>
+        <value>com.qf.anlystic.mr.pv.PageViewwriter</value>
     </property>
 
     <property>
         <name>writer_location</name>
-        <value>com.qianfeng.anlystic.mr.local.Locationwriter</value>
+        <value>com.qf.anlystic.mr.local.Locationwriter</value>
     </property>
 </configuration>

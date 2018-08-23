@@ -28,4 +28,8 @@ public class GlobalConstant {
 
     public static final long DAY_OF_MILLINSECONDS = 86400000L;
 
+    public static final String PREFIX_OUTPUT = "output_";
+    public static final String PREFIX_TOTAL = "total_";
+    public static final String PREFIX_HOUR = "hour_";
+
 }

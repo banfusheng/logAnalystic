@@ -32,6 +32,16 @@ public class BrowserNewUserWritter implements IOutputWritter {
         int newUserNums = ((IntWritable) mapWritableValue.getValue().get(new IntWritable(-1))).get();
 
         //为ps设置值
+        /*
+         browser_new_install_user--------
+            insert into `stats_device_browser` (
+            `date_dimension_id`,
+            `platform_dimension_id`,
+            `browser_dimension_id`,
+            `new_install_users`,
+            `created`)
+            values(?,?,?,?,?) on duplicate key update `new_install_users` = ?
+         */
         int i = 0;
         ps.setInt(++i, convert.getDimensionIDByDimension(
                 statsUserDimension.getStatsCommonDimension().getDateDimension()

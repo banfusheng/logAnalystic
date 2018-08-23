@@ -1,13 +1,13 @@
 /**
  * 从hbase中筛选,
- * 统计新增用户和新增的总用户的mapper类。
- * 需要Launch时间中的uuid为一个数
+ * 活跃会员的runner类
+ *
  *
  * @author Administrator
  * @create 2018/8/20
  * @since 1.0.0
  */
-package com.qf.anlystic.mr.nu;
+package com.qf.anlystic.mr.am;
 
 import com.google.common.collect.Lists;
 import com.qf.anlystic.model.dim.base.DateDimension;
@@ -38,6 +38,7 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * 新增用户的runner
  truncate dimension_browser;
@@ -61,16 +62,16 @@ import java.util.Map;
  truncate stats_user;
  truncate stats_view_depth;
  */
-public class NewUserRunner implements Tool {
-    private static final Logger logger = Logger.getLogger(NewUserRunner.class);
+public class ActiveMemberRunner implements Tool {
+    private static final Logger logger = Logger.getLogger(ActiveMemberRunner.class);
     private static Configuration conf = new Configuration();
 
     public static void main(String[] args) {
 
         try {
-            ToolRunner.run(conf, new NewUserRunner(), args);
+            ToolRunner.run(conf, new ActiveMemberRunner(), args);
         } catch (Exception e) {
-            logger.warn("执行新增用户的main方法失败.", e);
+            logger.warn("执行活跃会员的main方法失败.", e);
         }
     }
 
@@ -84,14 +85,14 @@ public class NewUserRunner implements Tool {
         //设置传入的时间参数
         this.setArgs(conf, args);
 
-        Job job = Job.getInstance(conf, "newUser");
-        job.setJarByClass(NewUserRunner.class);
+        Job job = Job.getInstance(conf, "ActiveMember");
+        job.setJarByClass(ActiveMemberRunner.class);
 
         //构造event_logs的扫描器并设置过滤条件
         List<Scan> scans = this.getScans(job);
         //初始化Tablemapper  addDependencyJars：false  本地提交本地运行
         //从hbase获取数据所以用TableMapReduceUtil.initTableMapperJob()
-        TableMapReduceUtil.initTableMapperJob(scans, NewUserMapper.class,
+        TableMapReduceUtil.initTableMapperJob(scans, ActiveMemberMapper.class,
                 StatsUserDimension.class, TimeOutputValue.class, job,
                 true);
 
@@ -103,20 +104,20 @@ public class NewUserRunner implements Tool {
 
 
         //设置reduer
-        job.setReducerClass(NewUserReducer.class);
+        job.setReducerClass(ActiveMemberReducer.class);
         job.setOutputKeyClass(StatsUserDimension.class);
         job.setOutputValueClass(MapWritableValue.class);
 
         //设置输出类
         job.setOutputFormatClass(IOutputFormat.class);
-//        return job.waitForCompletion(true)?0:1;
+        return job.waitForCompletion(true)?0:1;
         //计算新增总用户
-        if (job.waitForCompletion(true)) {
+      /*  if (job.waitForCompletion(true)) {
             this.caculateTotalUser(job);
             return 0;
         } else {
             return 1;
-        }
+        }*/
 
 
     }
@@ -237,12 +238,12 @@ public class NewUserRunner implements Tool {
                 Bytes.toBytes(EventLogConstants.EVENT_LOG_FAMILY_NAME),
                 Bytes.toBytes(EventLogConstants.LOG_COLUMN_NAME_EVENT_NAME),
                 CompareFilter.CompareOp.EQUAL,
-                Bytes.toBytes(EventLogConstants.EventEnum.LANUCH.alias)
+                Bytes.toBytes(EventLogConstants.EventEnum.PAGEVIEW.alias)
         ));
 
         //定义要获取的列
         String[] columns = new String[]{
-                EventLogConstants.LOG_COLUMN_NAME_UUID,
+                EventLogConstants.LOG_COLUMN_NAME_MEMBER_ID,
                 EventLogConstants.LOG_COLUMN_NAME_EVENT_NAME,
                 EventLogConstants.LOG_COLUMN_NAME_SERVER_TIME,
                 EventLogConstants.LOG_COLUMN_NAME_PLATFORM,

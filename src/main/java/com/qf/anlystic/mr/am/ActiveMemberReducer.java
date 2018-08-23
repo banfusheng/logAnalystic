@@ -1,11 +1,11 @@
 /**
- * 新增的用户和新增的总用户统计的Reducer类
+ * 活跃用户的Reduce类
  *
  * @author Administrator
  * @create 2018/8/20
  * @since 1.0.0
  */
-package com.qf.anlystic.mr.nu;
+package com.qf.anlystic.mr.am;
 
 import com.qf.anlystic.model.dim.key.StatsUserDimension;
 import com.qf.anlystic.model.dim.value.map.TimeOutputValue;
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NewUserReducer extends Reducer<StatsUserDimension,
+public class ActiveMemberReducer extends Reducer<StatsUserDimension,
         TimeOutputValue, StatsUserDimension, MapWritableValue> {
     //用set集合来实现去重的效果
     private Set<String> unique = new HashSet<>();

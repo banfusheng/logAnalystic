@@ -65,6 +65,7 @@ public class IDimensionConvertImpl implements IDimensionConvert {
          */
             String[] sqls = null;
             if (baseDimension instanceof BrowserDimension) {
+                //构建查询或插入维度表的sql语句
                 sqls = this.buildBrowserSqls(baseDimension);
             } else if (baseDimension instanceof DateDimension) {
                 sqls = this.buildDateSqls(baseDimension);

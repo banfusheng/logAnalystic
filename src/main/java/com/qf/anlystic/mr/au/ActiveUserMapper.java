@@ -1,13 +1,12 @@
 /**
- *  从hbase中筛选,
- *  统计新增用户和新增的总用户的mapper类。
- *  需要Launch时间中的uuid为一个数
+ * 从hbase中所有数据筛选,
+ * 统计活跃用户和总活跃用户的mapper类。
  *
  * @author Administrator
  * @create 2018/8/20
  * @since 1.0.0
  */
-package com.qf.anlystic.mr.nu;
+package com.qf.anlystic.mr.au;
 
 import com.qf.anlystic.model.dim.base.BrowserDimension;
 import com.qf.anlystic.model.dim.base.DateDimension;
@@ -29,18 +28,22 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.List;
 
-public class NewUserMapper extends TableMapper<StatsUserDimension,TimeOutputValue> {
-private static final Logger logger = Logger.getLogger(NewUserMapper.class);
+public class ActiveUserMapper extends TableMapper<StatsUserDimension, TimeOutputValue> {
+    private static final Logger logger = Logger.getLogger(ActiveUserMapper.class);
 
-private static  StatsUserDimension k = new StatsUserDimension();
-private static TimeOutputValue v = new TimeOutputValue();
-//列簇的byte数组
-private static byte[] family = Bytes.toBytes(EventLogConstants.EVENT_LOG_FAMILY_NAME);
-//new_install_user的kpi维度
-private static KpiDimension newUserKpi = new KpiDimension(KpiType.NEW_USER.kpiName);
-// browser_new_install_user的kpi维度
-private static KpiDimension browserNewUserKpi = new KpiDimension(
-        KpiType.BROWSER_NEW_INSTALL_USER.kpiName);
+    private static StatsUserDimension k = new StatsUserDimension();
+    private static TimeOutputValue v = new TimeOutputValue();
+    //列簇的byte数组
+    private static byte[] family = Bytes.toBytes(EventLogConstants.EVENT_LOG_FAMILY_NAME);
+    //new_active_user的kpi维度
+    private static KpiDimension activeUserKpi = new KpiDimension(KpiType.ACTIVE_USER.kpiName);
+    // browser_active_user的kpi维度
+    private static KpiDimension browserActiveUserKpi = new KpiDimension(
+            KpiType.BROWSER_ACTIVE_USER.kpiName);
+    private KpiDimension hourlyActiveUser = new KpiDimension(
+            KpiType.HOURLY_ACTIVE_USER.kpiName);
+
+
     @Override
     protected void map(ImmutableBytesWritable key, Result value, Context context)
             throws IOException, InterruptedException {
@@ -57,8 +60,8 @@ private static KpiDimension browserNewUserKpi = new KpiDimension(
                 Bytes.toBytes(EventLogConstants.LOG_COLUMN_NAME_BROWSER_VERSION)));
 
         //由于这三个字段要作为主键   进行空判断
-        if(StringUtils.isEmpty(uuid) || StringUtils.isEmpty(serverTime)
-                ||StringUtils.isEmpty(platform)){
+        if (StringUtils.isEmpty(uuid) || StringUtils.isEmpty(serverTime)
+                || StringUtils.isEmpty(platform)) {
             logger.warn("uuid,serverTime,platform中有空值" + "uuid = " + uuid
                     + "serverTime" + serverTime + "platform" + platform);
             return;
@@ -88,22 +91,27 @@ private static KpiDimension browserNewUserKpi = new KpiDimension(
          * 这样会产生6条数据
          */
         //循环平台维度的平台
-        for (PlatFormDimension pl : platFormDimensions){
-            statsCommonDimension.setKpiDimension(newUserKpi);
+        for (PlatFormDimension pl : platFormDimensions) {
+            statsCommonDimension.setKpiDimension(activeUserKpi);
             statsCommonDimension.setPlatFormDimension(pl);
 
             this.k.setStatsCommonDimension(statsCommonDimension);
             //为啥用默认的浏览器
             this.k.setBrowserDimension(defaultBrowserDimension);
 
-            context.write(this.k,this.v);
+            context.write(this.k, this.v);
+
+              //再输出一次，用于按小时统计活跃用户
+         /*   statsCommonDimension.setKpiDimension(hourlyActiveUser);
+            context.write(this.k,this.v);*/
+
             //循环浏览器维度的集合
-            for (BrowserDimension bd : browserDimensions){
-                statsCommonDimension.setKpiDimension(browserNewUserKpi);
+            for (BrowserDimension bd : browserDimensions) {
+                statsCommonDimension.setKpiDimension(browserActiveUserKpi);
                 this.k.setStatsCommonDimension(statsCommonDimension);
                 this.k.setBrowserDimension(bd);
                 //输出  用于浏览器模块的的新增用户上网计算
-                context.write(this.k,this.v);
+                context.write(this.k, this.v);
             }
 
         }

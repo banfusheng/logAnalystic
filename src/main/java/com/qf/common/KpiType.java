@@ -15,6 +15,7 @@ public enum KpiType {
     ACTIVE_MEMBER("active_member"),
     BROWSER_ACTIVE_MEMBER("browser_active_member"),
     NEW_MEMBER("new_member"),
+    EMPTY_MEMBER("empty_member"),
     BROWSER_NEW_MEMBER("browser_new_member"),
     MEMBER_INFO("member_info"),
     SESSION("session"),
@@ -23,6 +24,7 @@ public enum KpiType {
     HOURLY_SESSION("hourly_session"),
     PAGE_VIEW("pageview"),
     LOCATION("location");
+
 
     public final String kpiName;
 

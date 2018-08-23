@@ -51,7 +51,7 @@ public class IOutputFormat extends OutputFormat<BaseDimension, BaseStatsValueWri
         //do nothing
     }
 
-    /**
+    /**设置输出的路径
      * @param context
      * @return
      * @throws IOException
@@ -107,6 +107,7 @@ public class IOutputFormat extends OutputFormat<BaseDimension, BaseStatsValueWri
                 //从map中获取对应的ps
                 if (map.get(kpi) == null) {
                     //从conf中获取对应的kpi，因为conf中会存储sql
+                    // 从 output-mapping中对应关系获取
                     ps = this.conn.prepareStatement(conf.get(kpi.kpiName));
                     map.put(kpi, ps);
                 } else {

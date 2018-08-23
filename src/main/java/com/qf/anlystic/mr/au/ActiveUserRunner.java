@@ -1,13 +1,11 @@
 /**
- * 从hbase中筛选,
- * 统计新增用户和新增的总用户的mapper类。
- * 需要Launch时间中的uuid为一个数
+ * 从hbase所有数据中筛选出当天活跃用户和活跃的总用户
  *
  * @author Administrator
  * @create 2018/8/20
  * @since 1.0.0
  */
-package com.qf.anlystic.mr.nu;
+package com.qf.anlystic.mr.au;
 
 import com.google.common.collect.Lists;
 import com.qf.anlystic.model.dim.base.DateDimension;
@@ -24,7 +22,9 @@ import com.qf.util.JdbcUtil;
 import com.qf.util.Timeutil;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.filter.*;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
+import org.apache.hadoop.hbase.filter.MultipleColumnPrefixFilter;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
@@ -38,39 +38,40 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * 新增用户的runner
- truncate dimension_browser;
- truncate dimension_currency_type;
- truncate dimension_date;
- truncate dimension_event;
- truncate dimension_inbound;
- truncate dimension_kpi;
- truncate dimension_location;
- truncate dimension_os;
- truncate dimension_payment_type;
- truncate dimension_platform;
- truncate event_info;
- truncate order_info;
- truncate stats_device_browser;
- truncate stats_device_location;
- truncate stats_event;
- truncate stats_hourly;
- truncate stats_inbound;
- truncate stats_order;
- truncate stats_user;
- truncate stats_view_depth;
+ * truncate dimension_browser;
+ * truncate dimension_currency_type;
+ * truncate dimension_date;
+ * truncate dimension_event;
+ * truncate dimension_inbound;
+ * truncate dimension_kpi;
+ * truncate dimension_location;
+ * truncate dimension_os;
+ * truncate dimension_payment_type;
+ * truncate dimension_platform;
+ * truncate event_info;
+ * truncate order_info;
+ * truncate stats_device_browser;
+ * truncate stats_device_location;
+ * truncate stats_event;
+ * truncate stats_hourly;
+ * truncate stats_inbound;
+ * truncate stats_order;
+ * truncate stats_user;
+ * truncate stats_view_depth;
  */
-public class NewUserRunner implements Tool {
-    private static final Logger logger = Logger.getLogger(NewUserRunner.class);
+public class ActiveUserRunner implements Tool {
+    private static final Logger logger = Logger.getLogger(ActiveUserRunner.class);
     private static Configuration conf = new Configuration();
 
     public static void main(String[] args) {
 
         try {
-            ToolRunner.run(conf, new NewUserRunner(), args);
+            ToolRunner.run(conf, new ActiveUserRunner(), args);
         } catch (Exception e) {
-            logger.warn("执行新增用户的main方法失败.", e);
+            logger.warn("执行活跃用户的main方法失败.", e);
         }
     }
 
@@ -84,14 +85,14 @@ public class NewUserRunner implements Tool {
         //设置传入的时间参数
         this.setArgs(conf, args);
 
-        Job job = Job.getInstance(conf, "newUser");
-        job.setJarByClass(NewUserRunner.class);
+        Job job = Job.getInstance(conf, "ActiveUser");
+        job.setJarByClass(ActiveUserRunner.class);
 
         //构造event_logs的扫描器并设置过滤条件
         List<Scan> scans = this.getScans(job);
         //初始化Tablemapper  addDependencyJars：false  本地提交本地运行
         //从hbase获取数据所以用TableMapReduceUtil.initTableMapperJob()
-        TableMapReduceUtil.initTableMapperJob(scans, NewUserMapper.class,
+        TableMapReduceUtil.initTableMapperJob(scans, ActiveUserMapper.class,
                 StatsUserDimension.class, TimeOutputValue.class, job,
                 true);
 
@@ -103,30 +104,31 @@ public class NewUserRunner implements Tool {
 
 
         //设置reduer
-        job.setReducerClass(NewUserReducer.class);
+        job.setReducerClass(ActiveUserReducer.class);
         job.setOutputKeyClass(StatsUserDimension.class);
         job.setOutputValueClass(MapWritableValue.class);
 
         //设置输出类
         job.setOutputFormatClass(IOutputFormat.class);
-//        return job.waitForCompletion(true)?0:1;
+        return job.waitForCompletion(true)?0:1;
         //计算新增总用户
-        if (job.waitForCompletion(true)) {
+       /* if (job.waitForCompletion(true)) {
             this.caculateTotalUser(job);
             return 0;
         } else {
             return 1;
-        }
+        }*/
 
 
     }
 
     /**
      * 计算新增总用户
-     *1.获取运行当天的新增用户
+     * 1.获取运行当天的新增用户
      * 2.在获取运行日期的前一天  在数据库筛选出前一天的数据
      * 若前一天的数据存在  获取新增的总用户
      * 3.两者相加在存回运行当天的数据里
+     *
      * @param job
      */
     private void caculateTotalUser(Job job) {
@@ -233,17 +235,12 @@ public class NewUserRunner implements Tool {
 
         //定义hbase的过滤器设置过滤的条件为事件en=e_l
         FilterList fl = new FilterList();
-        fl.addFilter(new SingleColumnValueFilter(
-                Bytes.toBytes(EventLogConstants.EVENT_LOG_FAMILY_NAME),
-                Bytes.toBytes(EventLogConstants.LOG_COLUMN_NAME_EVENT_NAME),
-                CompareFilter.CompareOp.EQUAL,
-                Bytes.toBytes(EventLogConstants.EventEnum.LANUCH.alias)
-        ));
+
 
         //定义要获取的列
         String[] columns = new String[]{
                 EventLogConstants.LOG_COLUMN_NAME_UUID,
-                EventLogConstants.LOG_COLUMN_NAME_EVENT_NAME,
+                //EventLogConstants.LOG_COLUMN_NAME_EVENT_NAME,
                 EventLogConstants.LOG_COLUMN_NAME_SERVER_TIME,
                 EventLogConstants.LOG_COLUMN_NAME_PLATFORM,
                 EventLogConstants.LOG_COLUMN_NAME_BROWSER_NAME,
@@ -305,8 +302,8 @@ public class NewUserRunner implements Tool {
     }
 
     /**
-     *
      * 把将要使用的类和执行的sql语句的方法加入到conf中
+     *
      * @param configuration
      */
     @Override
@@ -314,9 +311,9 @@ public class NewUserRunner implements Tool {
         //this.conf = HBaseConfiguration.create(configuration);
         configuration.addResource("output-mapping.xml");
         configuration.addResource("output-writter.xml");
-        configuration.addResource("total-mapping.xml");
+
         this.conf = configuration;
-         //带着conf
+        //带着conf
     }
 
     @Override
